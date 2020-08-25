@@ -26,7 +26,7 @@ app.get("/api/notes", (req, res) => {
 
 
 app.post("/api/notes", (req, res) => {
-
+    req.body.id = Date.now();
     let newNote = req.body;
     fs.readFile("db/db.json", (err, data) => {
         if (err) throw err;
