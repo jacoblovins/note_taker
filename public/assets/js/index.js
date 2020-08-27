@@ -131,6 +131,7 @@ const renderNoteList = (notes) => {
     const $li = create$li(note.title).data(note);
     noteListItems.push($li);
   });
+  console.log(noteListItems)
 
   $noteList.append(noteListItems);
 };
@@ -149,3 +150,4 @@ $noteText.on("keyup", handleRenderSaveBtn);
 
 // Gets and renders the initial list of notes
 getAndRenderNotes();
+
