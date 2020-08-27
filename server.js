@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // function that writes to db.json file
 const writeToAPI = (arr) => {
-    fs.writeFile("db/db.json", JSON.stringify(arr), (err) => {
+    fs.writeFileSync("db/db.json", JSON.stringify(arr), (err) => {
         if (err)
         console.log(err);
         else {
@@ -54,9 +54,11 @@ app.post("/api/notes", (req, res) => {
 app.delete("/api/notes/:id", (req, res) => {
     const noteID = parseInt(req.params.id);
     const newAPI = apidb.filter(word => word.id !== noteID);
-    writeToAPI(newAPI);
-    console.log("deleted note")
-    res.send("Deleted")
+    writeToAPI(newAPI)
+    console.log(newAPI)
+    res.json({ok:true})
+    
+    // console.log("deleted note")
 });
 
 // anything in the url other than whats specified will take you to the home page
