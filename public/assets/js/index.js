@@ -131,9 +131,9 @@ const renderNoteList = (notes) => {
     const $li = create$li(note.title).data(note);
     noteListItems.push($li);
   });
-  console.log(noteListItems)
-
+  
   $noteList.append(noteListItems);
+  console.log(noteListItems)
 };
 
 // Gets notes from the db and renders them to the sidebar
