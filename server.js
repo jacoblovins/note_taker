@@ -2,7 +2,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
-const apidb = require("./db/db.json")
+let apidb = require("./db/db.json")
 const util = require("util");
 
 // set up server
@@ -19,29 +19,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
-// function that writes to db.json file
-const writeToAPI = (arr) => {
-    fs.writeFileSync("db/db.json", JSON.stringify(arr), (err) => {
+
+
+// handle get requests
+app.get("/api/notes", (req, res) => {
+    return readFileAsync("db/db.json", "utf8").then(notes => res.json(JSON.parse(notes)))
+});
+
+// handle post requests when someone adds a new note
+app.post("/api/notes", (req, res) => {
+    req.body.id = Date.now();
+    apidb.push(req.body);
+    writeFileAsync("db/db.json", JSON.stringify(apidb)).then(err => {
         if (err)
             console.log(err);
         else {
             console.log("File written successfully!");
         }
     });
-}
-
-
-// handle get requests
-app.get("/api/notes", (req, res) => {
-    return res.json(apidb);
-});
-
-// handle post requests when someone adds a new note
-app.post("/api/notes", (req, res) => {
-    const newNote = req.body;
-    newNote.id = Date.now();
-    apidb.push(newNote);
-    writeToAPI(apidb);
     res.send("notes posted");
 });
 
@@ -52,8 +47,8 @@ app.delete("/api/notes/:id", async (req, res) => {
 
    readFileAsync("db/db.json", "utf8").then(notes => {
         const currentNotes = JSON.parse(notes);
-        const newAPI = currentNotes.filter(word => word.id !== noteID);
-        writeFileAsync("db/db.json", JSON.stringify(newAPI)).then(err => {
+        apidb = currentNotes.filter(word => word.id !== noteID);
+        writeFileAsync("db/db.json", JSON.stringify(apidb)).then(err => {
             if (err)
                 console.log(err);
             else {
@@ -61,8 +56,7 @@ app.delete("/api/notes/:id", async (req, res) => {
             }
         });
     });
-
-    res.send("deleted!");
+    res.json(apidb);
 
 });
 
